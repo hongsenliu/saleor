@@ -516,8 +516,8 @@ class CheckoutCreate(DeprecatedModelMutation, I18nMixin):
         # Write metadata in post-save action because in "save" metadata doesn't exist in
         # cleaned_input.
 
-        metadata = cleaned_input.get("metadata")
-        private_metadata = cleaned_input.get("private_metadata")
+        metadata = cleaned_input.get("metadata", [])
+        private_metadata = cleaned_input.get("private_metadata", [])
 
         metadata_collection = cls.create_metadata_from_graphql_input(
             metadata, error_field_name="metadata"
@@ -536,6 +536,8 @@ class CheckoutCreate(DeprecatedModelMutation, I18nMixin):
             checkout_metadata,
             metadata_manager.MetadataType.PRIVATE,
         )
+
+        checkout_metadata.save()
 
         with allow_writer():
             checkout_metadata.save()
